@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Txn Enrichment</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🔎%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/static/base.css">
+  <link rel="stylesheet" href="/static/ui.css">
+  <link rel="stylesheet" href="/static/table.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">🔎</span>
+    <div><h1>Txn Enrichment</h1><p>Messy card descriptors → store, brand, category</p></div>
+  </div>
+  <div class="top-actions">
+    <span id="status-pill" class="pill">connecting…</span>
+    <button id="theme" class="icon-btn" title="Switch light / dark" aria-label="Switch theme">◐</button>
+  </div>
+</header>
+
+<main class="layout">
+  <section class="panel composer" aria-label="Input">
+    <div class="seg" id="provider-seg" role="tablist">
+      <button data-v="openai" role="tab">Live · web search</button>
+      <button data-v="demo" role="tab">Offline demo</button>
+    </div>
+    <p id="provider-note" class="muted small"></p>
+
+    <div class="label-row">
+      <label for="sigs">Merchant signatures</label>
+      <span id="count" class="muted small"></span>
+    </div>
+    <textarea id="sigs" rows="9" spellcheck="false" placeholder="SQ *BLUE BOTTLE #123 OAKLAND CA&#10;PAYPAL *NETFLIX.COM 4029357733"></textarea>
+    <div class="row">
+      <button id="examples" class="btn ghost" type="button">Load examples</button>
+      <button id="clear-text" class="btn ghost" type="button">Clear</button>
+    </div>
+
+    <div id="drop" class="drop" tabindex="0">
+      <input id="file" type="file" accept=".csv,.jsonl,.json,.txt" hidden>
+      <span id="drop-text">Drop a CSV / JSONL file here or <a href="#" id="browse">browse</a></span>
+      <span id="file-chip" class="chip" hidden><span id="file-name"></span><button id="file-remove" aria-label="Remove file">×</button></span>
+    </div>
+
+    <details>
+      <summary>Optional context <span class="muted small">(applies to typed lines)</span></summary>
+      <div class="grid3">
+        <label>Amount<input id="amount" inputmode="decimal" placeholder="12.50"></label>
+        <label>MCC<input id="mcc" maxlength="4" placeholder="5814"></label>
+        <label>Country<input id="country" maxlength="2" placeholder="US"></label>
+      </div>
+    </details>
+
+    <details>
+      <summary>Settings</summary>
+      <label>Model<input id="model" autocomplete="off"></label>
+      <label>Skip search when confidence is at least <output id="threshold-out"></output>
+        <input id="threshold" type="range" min="0" max="1" step="0.05"></label>
+      <div class="grid2">
+        <label>Max web searches<input id="budget" type="number" min="0" max="500"></label>
+        <label>Triage batch size<input id="batch" type="number" min="1" max="50"></label>
+      </div>
+      <label>Search context
+        <select id="context"><option>low</option><option>medium</option><option>high</option></select></label>
+      <button id="clear-cache" class="btn ghost" type="button">Clear saved results</button>
+      <span id="cache-note" class="muted small"></span>
+    </details>
+
+    <button id="run" class="btn primary" type="button">Enrich <kbd>⌘↵</kbd></button>
+    <p id="form-error" class="error" role="alert" hidden></p>
+  </section>
+
+  <section class="results" aria-live="polite">
+    <div id="empty" class="panel empty">
+      <div class="empty-art">🧾 → 🏪</div>
+      <h2>Paste some card descriptors</h2>
+      <p class="muted">Known brands cost nothing, the model handles the obvious ones, and only the
+        unclear merchants get a web search. You will watch every step here.</p>
+      <button id="examples2" class="btn" type="button">Try the examples</button>
+    </div>
+
+    <div id="live" class="panel" hidden>
+      <ol id="stepper" class="stepper"></ol>
+      <div class="bar"><div id="bar-fill" class="bar-fill"></div></div>
+      <p id="live-msg" class="muted small"></p>
+      <div id="merchants" class="merchants"></div>
+    </div>
+
+    <div id="summary" hidden></div>
+
+    <div id="table-wrap" class="panel" hidden>
+      <div class="toolbar">
+        <input id="q" type="search" placeholder="Filter results…" aria-label="Filter results">
+        <select id="cat" aria-label="Category"></select>
+        <label class="check"><input id="low" type="checkbox"> Low confidence</label>
+        <label class="check"><input id="group" type="checkbox"> Group duplicates</label>
+        <span class="spacer"></span>
+        <a id="dl-csv" class="btn ghost" href="#">CSV</a>
+        <a id="dl-json" class="btn ghost" href="#">JSON</a>
+      </div>
+      <div id="path-chips" class="chips"></div>
+      <div class="table-scroll"><table id="table"></table></div>
+      <p id="table-note" class="muted small"></p>
+    </div>
+  </section>
+</main>
+
+<aside id="drawer" class="drawer" hidden aria-label="Merchant details">
+  <div class="drawer-head"><h2 id="drawer-title"></h2><button id="drawer-close" class="icon-btn" aria-label="Close">×</button></div>
+  <div id="drawer-body"></div>
+</aside>
+<div id="scrim" class="scrim" hidden></div>
+<div id="toast" class="toast" hidden></div>
+
+<div id="login" class="login" hidden>
+  <form id="login-form" class="panel login-card">
+    <h2>Sign in</h2>
+    <p class="muted small">This server spends a real API key, so it needs the access password.</p>
+    <input id="password" type="password" autocomplete="current-password" placeholder="Access password" aria-label="Access password" required>
+    <button class="btn primary" type="submit">Sign in</button>
+    <p id="login-error" class="error" role="alert" hidden></p>
+  </form>
+</div>
+
+<script src="/static/config.js"></script>
+<script type="module" src="/static/js/main.js"></script>
+</body>
+</html>

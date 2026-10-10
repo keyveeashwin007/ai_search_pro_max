@@ -1,0 +1,30 @@
+# txn-enrichment settings. Every value can also be changed from the UI sidebar for a run.
+
+# Model: any OpenAI model that supports the Responses API `web_search` tool.
+# OPENAI_MODEL in .env overrides this.
+model: gpt-4.1-mini
+search_context_size: low        # low | medium | high - web content the model reads per search
+
+# Token / search optimization (agreed defaults)
+confidence_threshold: 0.8       # triage answers at/above this never trigger a web search
+batch_size: 20                  # merchants per triage call (spreads prompt overhead)
+max_searches_per_run: 20        # hard cap on web-search calls for one run
+max_searches_per_merchant: 1    # web_search calls allowed per unique merchant
+fuzzy_dedupe_threshold: 90      # 0-100; merge near-identical merchant spellings (100 = off)
+
+# Cache
+cache_path: cache.db
+cache_ttl_days: 30
+
+# Cost estimate in USD. Values below: gpt-4.1-mini, standard tier, from
+# https://platform.openai.com/docs/pricing (checked 2026-10-10). Update if you change model.
+price_input_per_1m: 0.40
+price_cached_input_per_1m: 0.10
+price_output_per_1m: 1.60
+price_per_search: 0.01                  # web_search: $10 per 1k calls
+# Extra search-content input tokens to add per search. 0 because the API's usage.input_tokens
+# already includes them (verified 2026-10-10 via RouterPlus: 1 search -> 9,176 input tokens,
+# billed $0.013816 = tokens + $0.01 fee exactly).
+search_content_tokens_per_search: 0
+
+known_merchants_path: data/known_merchants.yaml

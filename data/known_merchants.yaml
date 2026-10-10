@@ -1,0 +1,121 @@
+# Well-known merchants resolved with ZERO model tokens and ZERO searches.
+# `match` patterns are compared against the normalized signature (lowercase, no store
+# numbers / city / state). A pattern matches the whole key or its leading words.
+# `brand` is optional: when omitted it defaults to merchant_name.
+merchants:
+  - match: ["amzn mktp", "amazon mktplace", "amazon mktp", "amazon com", "amzn", "amazon"]
+    merchant_name: Amazon
+    category: Shopping
+    subcategory: Online Marketplace
+    website: amazon.com
+    merchant_type: online
+  - match: ["amazon prime", "prime video"]
+    merchant_name: Amazon Prime
+    brand: Amazon
+    category: Subscriptions & Software
+    subcategory: Streaming & Membership
+    website: amazon.com
+    merchant_type: online
+  - match: ["uber eats", "ubereats"]
+    merchant_name: Uber Eats
+    category: Food & Dining
+    subcategory: Food Delivery
+    website: ubereats.com
+    merchant_type: online
+  - match: ["uber", "uber trip", "uber rides"]
+    merchant_name: Uber
+    category: Transportation
+    subcategory: Rideshare
+    website: uber.com
+    merchant_type: online
+  - match: ["lyft", "lyft ride"]
+    merchant_name: Lyft
+    category: Transportation
+    subcategory: Rideshare
+    website: lyft.com
+    merchant_type: online
+  - match: ["doordash", "dd doordash"]
+    merchant_name: DoorDash
+    category: Food & Dining
+    subcategory: Food Delivery
+    website: doordash.com
+    merchant_type: online
+  - match: ["starbucks"]
+    merchant_name: Starbucks
+    category: Food & Dining
+    subcategory: Coffee Shop
+    website: starbucks.com
+    merchant_type: physical
+  - match: ["mcdonald's", "mcdonalds"]
+    merchant_name: McDonald's
+    category: Food & Dining
+    subcategory: Fast Food
+    website: mcdonalds.com
+    merchant_type: physical
+  - match: ["netflix"]
+    merchant_name: Netflix
+    category: Subscriptions & Software
+    subcategory: Video Streaming
+    website: netflix.com
+    merchant_type: online
+  - match: ["spotify"]
+    merchant_name: Spotify
+    category: Subscriptions & Software
+    subcategory: Music Streaming
+    website: spotify.com
+    merchant_type: online
+  - match: ["apple com bill", "apple com", "apple", "itunes"]
+    merchant_name: Apple
+    category: Subscriptions & Software
+    subcategory: App Store & Services
+    website: apple.com
+    merchant_type: online
+  - match: ["google", "google cloud", "google youtube"]
+    merchant_name: Google
+    category: Subscriptions & Software
+    subcategory: Digital Services
+    website: google.com
+    merchant_type: online
+  - match: ["walmart", "wal mart", "wm supercenter"]
+    merchant_name: Walmart
+    category: Groceries
+    subcategory: Supercenter
+    website: walmart.com
+    merchant_type: both
+  - match: ["target"]
+    merchant_name: Target
+    category: Shopping
+    subcategory: Department Store
+    website: target.com
+    merchant_type: both
+  - match: ["costco whse", "costco"]
+    merchant_name: Costco
+    category: Groceries
+    subcategory: Warehouse Club
+    website: costco.com
+    merchant_type: both
+  - match: ["whole foods", "wholefds"]
+    merchant_name: Whole Foods Market
+    brand: Whole Foods Market
+    category: Groceries
+    subcategory: Supermarket
+    website: wholefoodsmarket.com
+    merchant_type: physical
+  - match: ["shell oil", "shell"]
+    merchant_name: Shell
+    category: Transportation
+    subcategory: Fuel
+    website: shell.com
+    merchant_type: physical
+  - match: ["airbnb"]
+    merchant_name: Airbnb
+    category: Travel
+    subcategory: Lodging
+    website: airbnb.com
+    merchant_type: online
+  - match: ["openai", "chatgpt subscription"]
+    merchant_name: OpenAI
+    category: Subscriptions & Software
+    subcategory: AI Software
+    website: openai.com
+    merchant_type: online

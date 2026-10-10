@@ -1,0 +1,25 @@
+# Render blueprint for the Python backend (New > Blueprint). Secrets are asked for on first deploy.
+# After Netlify gives you a URL, set TXN_ALLOWED_ORIGINS to it (no trailing slash).
+services:
+  - type: web
+    name: txn-enrichment-api
+    runtime: docker
+    plan: starter            # a persistent disk needs a paid plan; the free plan loses the cache on restart
+    healthCheckPath: /api/health
+    disk:
+      name: txn-cache
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      - key: TXN_ACCESS_PASSWORD
+        sync: false          # you type it in the Render dashboard
+      - key: TM_API_KEY
+        sync: false          # or OPENAI_API_KEY; see README
+      - key: TXN_ALLOWED_ORIGINS
+        sync: false          # https://<your-site>.netlify.app
+      - key: TXN_MAX_RUNNING
+        value: "2"
+      - key: TXN_MAX_ROWS
+        value: "500"
+      - key: TXN_MAX_SEARCHES
+        value: "100"

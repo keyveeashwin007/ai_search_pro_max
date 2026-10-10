@@ -1,0 +1,8 @@
+# Netlify serves only the static front end. The Python API runs elsewhere (see DEPLOY.md);
+# set TXN_API_URL in Netlify > Site configuration > Environment variables.
+[build]
+  command = "python3 scripts/build_netlify.py"
+  publish = "dist"
+
+[build.environment]
+  PYTHON_VERSION = "3.12"
